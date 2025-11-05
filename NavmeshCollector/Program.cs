@@ -154,6 +154,11 @@ namespace NavmeshCollector
 
             parentModKey = navmesh.Parent.ModKey;
 
+            // Bethesda override filtering
+            var isFromBethesda = basePlugins.Contains(parentModKey);
+            if (!overrideSettings.IncludeBethesdaOverrides && isFromBethesda)
+                return false;
+
             // Cell type filtering
             if (!cellSettings.InteriorCells && navmesh.Record.Data.Parent is CellNavmeshParent)
                 return false;
@@ -185,13 +190,8 @@ namespace NavmeshCollector
                 return false;
 
             // Check for overrides with conflicts from multiple Bethesda plugins
-            var isBethesdaConflict = distinctOverrides.Count - distinctOverrides.Where(o => basePlugins.Contains(o.Record.FormKey.ModKey)).Count() > 1;
+            var isBethesdaConflict = (distinctOverrides.Count - distinctOverrides.Where(o => basePlugins.Contains(o.Parent!.ModKey)).Count()) == 1;
             if (!overrideSettings.IncludeBethesdaConflicts && isBethesdaConflict)
-                return false;
-
-            // Bethesda override filtering
-            var isFromBethesda = basePlugins.Contains(parentModKey);
-            if (!overrideSettings.IncludeBethesdaOverrides && isFromBethesda)
                 return false;
 
             return true;
