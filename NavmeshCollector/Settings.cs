@@ -44,8 +44,13 @@ namespace NavmeshCollector
         public bool IncludeNoConflicts { get; set; } = false;
 
         [SynthesisOrder]
+        [SynthesisSettingName("Include Bethesda Conflicts")]
+        [SynthesisTooltip("Winning navmesh overrides in records with conflicts due to Bethesda plugins will be excluded from the output.")]
+        public bool IncludeBethesdaConflicts { get; set; } = false;
+
+        [SynthesisOrder]
         [SynthesisSettingName("Include Bethesda Overrides")]
         [SynthesisTooltip("Winning navmesh overrides originating from Bethesda plugins will be included in the output.")]
-        public bool IncludeBethesda { get; set; } = false;
+        public bool IncludeBethesdaOverrides { get; set; } = false;
     }
 }
