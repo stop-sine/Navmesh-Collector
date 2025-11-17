@@ -6,7 +6,6 @@ using Mutagen.Bethesda.Skyrim;
 using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.FormKeys.SkyrimSE;
 using Mutagen.Bethesda.Plugins.Cache;
-using System.Runtime.CompilerServices;
 
 namespace NavmeshCollector
 {
@@ -115,6 +114,11 @@ namespace NavmeshCollector
             var basePlugins = new HashSet<ModKey>(BethesdaPlugins.Concat(CreationClubPlugins));
             var cache = state.LinkCache;
 
+            var mods = state.LoadOrder.PriorityOrder
+                .Where(m => m.ModExists)
+                .Select(m => m.Mod)
+                .ToList();
+
             var candidateNavmeshes = state.LoadOrder.PriorityOrder
                 .OnlyEnabledAndExisting()
                 .NavigationMesh()
@@ -126,14 +130,38 @@ namespace NavmeshCollector
             {
                 if (ShouldCollectNavmesh(navmesh, cellSettings, overrideSettings, basePlugins, cache, out var parentModKey))
                 {
+
                     Console.WriteLine($"Collecting navmesh {navmesh.Record.FormKey} from override in {parentModKey}");
                     navmesh.GetOrAddAsOverride(state.PatchMod);
+                    // var masterRefs = state.PatchMod.MasterReferences.Select(m => m.Master);
+                    // var masters = GatherMasters(navmesh, cache, mods).Where(m => !masterRefs.Contains(m));
+                    // foreach (var master in masters)
+                    //     state.PatchMod.MasterReferences.Add(new MasterReference
+                    //     {
+                    //         Master = master
+                    //     });
                     collectedCount++;
                 }
             }
-
             Console.WriteLine($"Collected {collectedCount} navmeshes");
         }
+
+        // private static List<ModKey> GatherMasters(
+        //     IModContext<ISkyrimMod, ISkyrimModGetter, INavigationMesh, INavigationMeshGetter> navmesh,
+        //     ILinkCache cache,
+        //     List<ISkyrimModGetter?> mods
+        //     )
+        // {
+        //     var overrideParents = cache
+        //         .ResolveAllSimpleContexts<INavigationMeshGetter>(navmesh.Record.FormKey)
+        //         .Select(o => o.Parent!.ModKey)
+        //         .ToList();
+        //     var masters = mods
+        //         .Where(m => m is not null && overrideParents.Contains(m.ModKey))
+        //         .SelectMany(m => m!.MasterReferences.Select(n => n.Master))
+        //         .ToList();
+        //     return masters;
+        // }
 
         /// <summary>
         /// Determines whether a navmesh should be collected based on settings and override analysis.
