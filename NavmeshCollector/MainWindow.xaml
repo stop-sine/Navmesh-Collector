@@ -1,0 +1,287 @@
+<mah:MetroWindow x:Class="NavmeshCollector.MainWindow"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                 xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+                 xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+                 xmlns:local="clr-namespace:NavmeshCollector"
+                 xmlns:plugins="clr-namespace:Mutagen.Bethesda.WPF.Plugins;assembly=Mutagen.Bethesda.WPF"
+                 xmlns:noggog="clr-namespace:Noggog.WPF;assembly=Noggog.WPF"
+                 mc:Ignorable="d"
+                 Title="Navmesh Collector"
+                 Width="900"
+                 Height="700"
+                 MinWidth="700"
+                 MinHeight="500"
+                 WindowStartupLocation="CenterScreen"
+                 GlowBrush="{DynamicResource MahApps.Brushes.Accent}"
+                 BorderThickness="1"
+                 BorderBrush="{DynamicResource MahApps.Brushes.Accent}"
+                 TitleCharacterCasing="Normal"
+                 ShowIconOnTitleBar="True"
+                 SaveWindowPosition="True">
+    
+    <mah:MetroWindow.RightWindowCommands>
+        <mah:WindowCommands>
+            <Button Content="About" 
+                    ToolTip="About this application"/>
+        </mah:WindowCommands>
+    </mah:MetroWindow.RightWindowCommands>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto"
+                  HorizontalScrollBarVisibility="Disabled">
+        <Grid Margin="20">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*" MinHeight="200"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- Title Header -->
+            <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,20">
+                <iconPacks:PackIconMaterial Kind="VectorPolylineEdit" 
+                                           Width="32" 
+                                           Height="32" 
+                                           VerticalAlignment="Center"
+                                           Foreground="{DynamicResource MahApps.Brushes.Accent}"
+                                           Margin="0,0,10,0"/>
+                <TextBlock Text="Navmesh Collector for Skyrim SE"
+                           FontSize="24"
+                           FontWeight="Light"
+                           VerticalAlignment="Center"/>
+            </StackPanel>
+
+            <!-- Worldspace Selection -->
+            <Expander Grid.Row="1" 
+                      Margin="0,0,0,15"
+                      IsExpanded="False"
+                      Style="{DynamicResource MahApps.Styles.Expander}">
+                <Expander.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <iconPacks:PackIconMaterial Kind="Earth" 
+                                                   Width="16" 
+                                                   Height="16" 
+                                                   VerticalAlignment="Center"
+                                                   Margin="0,0,8,0"/>
+                        <TextBlock Text="Worldspace Selection" 
+                                   FontWeight="SemiBold"
+                                   FontSize="14"/>
+                    </StackPanel>
+					
+                </Expander.Header>
+                <StackPanel Margin="10,10,10,5">
+                    <TextBlock Text="Select specific worldspaces to filter navmesh collection. Leave empty to include all worldspaces." 
+                               TextWrapping="Wrap"
+                               Margin="0,0,0,10"
+                               FontStyle="Italic"
+                               Foreground="{DynamicResource MahApps.Brushes.Gray2}"/>
+                    <plugins:FormKeyMultiPicker
+                        FormKeys="{Binding Settings.WorldspaceSelection.SelectedWorldspaces}"
+                        LinkCache="{Binding LinkCache}"
+                        ScopedTypes="{Binding WorldspaceTypes}"
+                        MinHeight="150"
+                        MaxHeight="300"/>
+                </StackPanel>
+            </Expander>
+
+            <!-- Cell Settings -->
+            <Expander Grid.Row="2" 
+                      Margin="0,0,0,15"
+                      IsExpanded="True"
+                      Style="{DynamicResource MahApps.Styles.Expander}">
+                <Expander.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <iconPacks:PackIconMaterial Kind="GridLarge" 
+                                                   Width="16" 
+                                                   Height="16" 
+                                                   VerticalAlignment="Center"
+                                                   Margin="0,0,8,0"/>
+                        <TextBlock Text="Cell Settings" 
+                                   FontWeight="SemiBold"
+                                   FontSize="14"/>
+                    </StackPanel>
+                </Expander.Header>
+                <StackPanel Margin="10,10,10,5">
+                    <mah:ToggleSwitch IsOn="{Binding Settings.CellSettings.InteriorCells}"
+                                     Header="Interior Cells"
+                                     Margin="0,5"
+                                     ToolTip="Navmeshes in interior cell records will be included in the output"/>
+                    <mah:ToggleSwitch IsOn="{Binding Settings.CellSettings.ExteriorCells}"
+                                     Header="Exterior Cells"
+                                     Margin="0,5"
+                                     ToolTip="Navmeshes in exterior cell records will be included in the output"/>
+                    <mah:ToggleSwitch IsOn="{Binding Settings.CellSettings.ModdedCells}"
+                                     Header="Modded Cells"
+                                     Margin="0,5"
+                                     ToolTip="Navmeshes in cell records from non-Bethesda plugins will be included in the output"/>
+                </StackPanel>
+            </Expander>
+
+            <!-- Override Settings -->
+            <Expander Grid.Row="3" 
+                      Margin="0,0,0,15"
+                      IsExpanded="True"
+                      Style="{DynamicResource MahApps.Styles.Expander}">
+                <Expander.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <iconPacks:PackIconMaterial Kind="FileReplace" 
+                                                   Width="16" 
+                                                   Height="16" 
+                                                   VerticalAlignment="Center"
+                                                   Margin="0,0,8,0"/>
+                        <TextBlock Text="Override Settings" 
+                                   FontWeight="SemiBold"
+                                   FontSize="14"/>
+                    </StackPanel>
+                </Expander.Header>
+                <StackPanel Margin="10,10,10,5">
+                    <mah:ToggleSwitch IsOn="{Binding Settings.OverrideSettings.IncludeSingles}"
+                                     Header="Single Records"
+                                     Margin="0,5"
+                                     ToolTip="Navmeshes in records from single plugins will be included in the output"/>
+                    <mah:ToggleSwitch IsOn="{Binding Settings.OverrideSettings.IncludeIdenticals}"
+                                     Header="Identical Records"
+                                     Margin="0,5"
+                                     ToolTip="Navmeshes in records from identical plugins will be included in the output"/>
+                    <mah:ToggleSwitch IsOn="{Binding Settings.OverrideSettings.IncludeNoConflicts}"
+                                     Header="No Conflict Overrides"
+                                     Margin="0,5"
+                                     ToolTip="Winning navmeshes in records from plugins that override without conflict will be included in the output"/>
+                    <mah:ToggleSwitch IsOn="{Binding Settings.OverrideSettings.IncludeBethesdaConflicts}"
+                                     Header="Bethesda Conflicts"
+                                     Margin="0,5"
+                                     ToolTip="Winning navmesh overrides in records with conflicts due to Bethesda plugins will be included in the output"/>
+                    <mah:ToggleSwitch IsOn="{Binding Settings.OverrideSettings.IncludeBethesdaOverrides}"
+                                     Header="Bethesda Overrides"
+                                     Margin="0,5"
+                                     ToolTip="Winning navmesh overrides originating from Bethesda plugins will be included in the output"/>
+                </StackPanel>
+            </Expander>
+
+            <!-- Output Console -->
+            <GroupBox Grid.Row="4" 
+                      Margin="0,0,0,15"
+                      Style="{DynamicResource MahApps.Styles.GroupBox}">
+                <GroupBox.Header>
+                    <StackPanel Orientation="Horizontal">
+                        <iconPacks:PackIconMaterial Kind="ConsoleNetwork" 
+                                                   Width="16" 
+                                                   Height="16" 
+                                                   VerticalAlignment="Center"
+                                                   Margin="0,0,8,0"/>
+                        <TextBlock Text="Output" 
+                                   FontWeight="SemiBold"
+                                   FontSize="14"/>
+                    </StackPanel>
+                </GroupBox.Header>
+                <Border Background="{DynamicResource MahApps.Brushes.ThemeBackground}"
+                        BorderBrush="{DynamicResource MahApps.Brushes.Gray7}"
+                        BorderThickness="1"
+                        Margin="5">
+                    <ScrollViewer x:Name="OutputScrollViewer"
+                                 VerticalScrollBarVisibility="Auto"
+                                 HorizontalScrollBarVisibility="Auto"
+                                 Padding="10">
+                        <TextBox Text="{Binding OutputText, Mode=OneWay}" 
+                                 FontFamily="Consolas"
+                                 FontSize="12"
+                                 TextWrapping="Wrap"
+                                 Foreground="{DynamicResource MahApps.Brushes.Text}"
+                                 Background="Transparent"
+                                 BorderThickness="0"
+                                 IsReadOnly="True"
+                                 IsReadOnlyCaretVisible="True"
+                                 VerticalAlignment="Stretch"
+                                 HorizontalAlignment="Stretch"/>
+                    </ScrollViewer>
+                </Border>
+            </GroupBox>
+
+            <!-- Action Buttons -->
+            <Grid Grid.Row="5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Progress Ring (visible during collection) -->
+                <StackPanel Grid.Column="0" 
+                           Orientation="Horizontal" 
+                           VerticalAlignment="Center">
+                    <StackPanel.Style>
+                        <Style TargetType="StackPanel">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsRunning}" Value="True">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </StackPanel.Style>
+                    <mah:ProgressRing IsActive="{Binding IsRunning}" 
+                                     Width="24" 
+                                     Height="24"
+                                     Margin="0,0,10,0"/>
+                    <TextBlock Text="Processing navmeshes..." 
+                              VerticalAlignment="Center"
+                              FontStyle="Italic"/>
+                </StackPanel>
+
+                <!-- Action Buttons -->
+                <StackPanel Grid.Column="1" 
+                           Orientation="Horizontal" 
+                           HorizontalAlignment="Right">
+                    <Button Command="{Binding SaveLogCommand}"
+                            Style="{StaticResource MahApps.Styles.Button.Square}"
+                            Width="120"
+                            Height="40"
+                            Margin="0,0,10,0"
+                            ToolTip="Save console output to NavmeshCollector.log">
+                        <StackPanel Orientation="Horizontal">
+                            <iconPacks:PackIconMaterial Kind="FileDocument" 
+                                                       Width="16" 
+                                                       Height="16" 
+                                                       VerticalAlignment="Center"
+                                                       Margin="0,0,8,0"/>
+                            <TextBlock Text="Save Log" 
+                                      VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Command="{Binding SaveSettingsCommand}"
+                            Style="{StaticResource MahApps.Styles.Button.Square}"
+                            Width="140"
+                            Height="40"
+                            Margin="0,0,10,0">
+                        <StackPanel Orientation="Horizontal">
+                            <iconPacks:PackIconMaterial Kind="ContentSave" 
+                                                       Width="16" 
+                                                       Height="16" 
+                                                       VerticalAlignment="Center"
+                                                       Margin="0,0,8,0"/>
+                            <TextBlock Text="Save Settings" 
+                                      VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Command="{Binding RunCollectionCommand}"
+                            Style="{StaticResource MahApps.Styles.Button.Square.Accent}"
+                            Width="140"
+                            Height="40">
+                        <StackPanel Orientation="Horizontal">
+                            <iconPacks:PackIconMaterial Kind="Play" 
+                                                       Width="16" 
+                                                       Height="16" 
+                                                       VerticalAlignment="Center"
+                                                       Margin="0,0,8,0"/>
+                            <TextBlock Text="Run Collection" 
+                                      VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </Grid>
+        </Grid>
+    </ScrollViewer>
+</mah:MetroWindow>
